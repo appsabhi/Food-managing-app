@@ -1,14 +1,36 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useReducer, useState } from 'react'
 import SearchComponent from "./SearchComponent"
 import Recipe_item from "./recipe-item"
 import Favourites from "./favourites"
-import SearchFav from "./Searchfavourites"
+
+
+let reducer =(filtereditem,action)=>{
+  switch (action.type) {
+    case "filterfav":
+      return  {
+        ...filtereditem,
+      filtervalue:action.text
+      } 
+  
+    default:
+      filtereditem
+  }
+
+}
+
+
+
+let initialstate ={
+  filtervalue:""
+}
 
 const Homepage = () => {
   let [loadingstate, setloading] = useState(false)
   let [recipies, setrecipies] = useState([])
   let [favorites, setfavourites] = useState([])
   let [succesapi,setsuccessapi] = useState(false)
+ let [filtereditem,dispatch] =  useReducer(reducer,initialstate)
+
 
   function getdata(data) {
     setloading(true)
@@ -68,7 +90,13 @@ const Homepage = () => {
 
    localStorage.setItem("favourites",JSON.stringify(newfav))
   }
-    console.log(succesapi)
+    console.log(filtereditem,"filter")
+
+ let filteredfavourites =   favorites.filter((item)=>{
+      item.title.toLowercase().includes(filtereditem.filtervalue)
+    })
+    console.log("filtereditem",filteredfavourites)
+
 
   return (
     <>
@@ -77,7 +105,16 @@ const Homepage = () => {
         <SearchComponent fun={getdata}  apistate={succesapi}  setsuccessapi={setsuccessapi} />
         {loadingstate && <div className='w-56 h-56 flex justify-center items-center text-xl text-white '>Loading Pls Wait!!!! </div>}
          
-        <SearchFav/>
+        <div className='w-full h-9 flex flex-col gap-7   justify-center items-center' >
+        <h2 className='text-pink-800 text- flex justify-self-center '>Search for favourites </h2>
+        <form className='flex gap-5' >
+        <input onChange={(event)=>{dispatch({
+          type:"filterfav",
+          text:event.target.value
+        })}}  type="text" className='w-64 h-10 rounded-md' placeholder="   Search Your Favourites...." />
+    
+      </form>
+    </div>
           
          {/* favourites */}
          <div className='text-center text-3xl text-orange-600'>Favourites</div>

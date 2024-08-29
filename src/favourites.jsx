@@ -1,7 +1,7 @@
 import React from 'react'
 
 const favourites = (props) => {
-    console.log(props)
+   
     let  {favorite_item,removefromfavourites} = props
   return (
     <div >
