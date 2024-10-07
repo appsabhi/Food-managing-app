@@ -63,7 +63,8 @@ const Homepage = () => {
   function addtofavorites(fav) {
 
 
-    let favcopy = [...favorites]
+    let favcopy = [...(favorites || [])];
+
 
     let exist = favcopy.findIndex((item) => item.id === fav.id)
 
@@ -92,9 +93,9 @@ const Homepage = () => {
   }
     console.log(filtereditem,"filter")
 
- let filteredfavourites =   favorites.filter((item)=>{
-      item.title.toLowercase().includes(filtereditem.filtervalue)
-    })
+ let filteredfavourites = favorites  ?  favorites.filter((item)=>{
+  item.title.toLowerCase().includes(filtereditem.filtervalue)
+}):null
     console.log("filtereditem",filteredfavourites)
 
 
