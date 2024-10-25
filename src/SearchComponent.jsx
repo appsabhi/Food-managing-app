@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 
 const SearchComponent = (props) => {
-  let  { fun, apistate, setsuccessapi } = props;
+  let  { getdatafromapi, apistate, setsuccessapi } = props;
 
   let inputref = useRef(null);
   let [inputdata, setdata] = useState("");
@@ -14,15 +14,16 @@ const SearchComponent = (props) => {
   }
   function Search(event) {
     event.preventDefault();
-    fun(inputdata);
+    getdatafromapi(inputdata);
   }
 
   useEffect(() => {
     if (apistate) {
       setdata("");
-    }
     setsuccessapi(false);
-  }, [apistate]);
+
+    }
+  }, [apistate,setsuccessapi]);
 
   return (
     <div>
@@ -44,7 +45,7 @@ const SearchComponent = (props) => {
 };
 
 SearchComponent.propTypes = {
-  fun: PropTypes.func.isRequired,         // The function to execute on search
+  getdatafromapi: PropTypes.func.isRequired,         // The function to execute on search
   apistate: PropTypes.bool.isRequired,    // Boolean flag for API success/failure state
   setsuccessapi: PropTypes.func.isRequired, // Function to update the success state
 };

@@ -1,21 +1,22 @@
-import { useContext, useEffect, useReducer, useState } from "react";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import SearchComponent from "./SearchComponent";
 import Recipe_item from "./recipe-item";
 import Favourites from "./favourites";
-import Changetheme from './changethemecomponent'
+import Changetheme from "./changethemecomponent";
 import Themecontext from "./Themecontext";
 
-
-
 let reducer = (filtereditem, action) => {
-
-
-
   switch (action.type) {
     case "filterfav":
       return {
         ...filtereditem,
-        filtervalue: action.text,
+        filtervalue: action.value,
       };
 
     default:
@@ -28,9 +29,7 @@ let initialstate = {
 };
 
 const Homepage = () => {
-  let {theme} = useContext(Themecontext)
-    
-
+  let { theme } = useContext(Themecontext);
 
   let [loadingstate, setloading] = useState(false);
   let [recipies, setrecipies] = useState([]);
@@ -62,28 +61,27 @@ const Homepage = () => {
     getmovies(data);
   }
 
+  let addtofavorites = useCallback(
+    (fav) => {
+      let favcopy = [...(favorites || [])];
 
-  function addtofavorites(fav) {
-    let favcopy = [...(favorites || [])];
+      let exist = favcopy.findIndex((item) => item.id === fav.id);
 
-    let exist = favcopy.findIndex((item) => item.id === fav.id);
-
-    if (exist === -1) {
-      favcopy.push(fav);
-      setfavourites(favcopy);
-      localStorage.setItem("favourites", JSON.stringify(favcopy));
-    } else {
-      alert("already exist in the favourites");
-    }
-  }
-
+      if (exist === -1) {
+        favcopy.push(fav);
+        setfavourites(favcopy);
+        localStorage.setItem("favourites", JSON.stringify(favcopy));
+      } else {
+        alert("already exist in the favourites");
+      }
+    },
+    [favorites]
+  );
 
   useEffect(() => {
     let getfavfromlocalstorage = JSON.parse(localStorage.getItem("favourites"));
     setfavourites(getfavfromlocalstorage);
   }, []);
-
-
 
   function removefromfav(fav_id) {
     let newfav = favorites.filter((item) => item.id !== fav_id);
@@ -92,62 +90,94 @@ const Homepage = () => {
     localStorage.setItem("favourites", JSON.stringify(newfav));
   }
 
-
-
-  console.log(filtereditem, "filter");
-
-
   let filteredfavourites = favorites
-
     ? favorites.filter((item) => {
-        item.title.toLowerCase().includes(filtereditem.filtervalue);
+      console.log(filtereditem.filtervalue)
+     
+return item.title.toLowerCase().includes(filtereditem.filtervalue);
       })
     : null;
 
   console.log("filtereditem", filteredfavourites);
 
+
+ let demofiltering = favorites.filter((item)=>{
+    return item.title.includes(null)
+  })
+
+  console.log("demo-----",demofiltering)
+
+  let render_method = useCallback(() => {
+    if (recipies && recipies.length > 0) {
+      return recipies.map((item) => (
+        <Recipe_item
+          addtofavorites={() => {
+            addtofavorites(item);
+          }}
+          key={item.id}
+          item={item}
+        />
+      ));
+    }
+  }, [recipies, addtofavorites]);
+
+
+  console.log("apistatus",succesapi)
+
   return (
     <>
       {/* loading state */}
-      <div className={theme ? "w-full h-full p-10 bg-yellow-600 flex flex-col items-center gap-16 overflow-x-scroll" : "w-full h-full p-10 bg-emerald-950 flex flex-col items-center gap-16 overflow-x-scroll"}>
-       <Changetheme    />
+      <div
+      
+        className={
+          theme
+            ? "w-full h-full p-10 bg-yellow-600 flex flex-col items-center gap-10 overflow-x-scroll"
+            : "w-full h-full p-10 bg-emerald-950 flex flex-col items-center gap-10 overflow-x-scroll"
+        }
+      >
+
+
+
+        <Changetheme />
 
         <SearchComponent
-          fun={getdata}
+          getdatafromapi={getdata}
           apistate={succesapi}
           setsuccessapi={setsuccessapi}
         />
 
-        {loadingstate ? (
-          <div className="w-56 h-56 flex justify-center items-center text-xl text-white ">
-            loading....
-          </div>
-        ) : null}
+      
         {/* <span className='w-10 h-72 animate-spin rounded-full border-2  border-l-orange-500'></span>  */}
         <div className="w-full h-9 flex flex-col gap-7   justify-center items-center">
           <h2 className="text-pink-800 text- flex justify-self-center ">
-            Search for favourites{" "}
+            Search for favourites
           </h2>
           <form className="flex gap-5">
             <input
               onChange={(event) => {
                 dispatch({
                   type: "filterfav",
-                  text: event.target.value,
+                  value: event.target.value,
                 });
               }}
+              value={filtereditem.filtervalue}
               type="text"
               className="w-64 h-10 rounded-md"
               placeholder="   Search Your Favourites...."
             />
           </form>
         </div>
-
+      
         {/* favourites */}
-        <div className="text-center  text-3xl text-orange-600  ">Favourites</div>
-        <div className="w-full h-full flex items-centre justify-center  gap-5  flex-wrap  ">
-          {favorites && favorites.length
-            ? favorites.map((fav) => (
+        <h1 className="text-center  text-3xl text-orange-600  ">
+          Favourites
+        </h1>
+
+      
+     
+       <div className="w-full h-full   flex  flex-nowrap  items-center gap-5 justify-center ">
+          {filteredfavourites && filteredfavourites.length
+            ? filteredfavourites.map((fav) => (
                 <Favourites
                   favorite_item={fav}
                   removefromfavourites={removefromfav}
@@ -157,21 +187,22 @@ const Homepage = () => {
             : null}
         </div>
 
+      
+         
+      
+        {loadingstate ? (
+           <div className="w-20 h-full  border-8 rounded-full border-r-yellow-400 border-b-yellow-200  border-emerald-950  animate-spin   ">
+         
+          </div>
+        ) : null}
+
         {/* recipies list */}
         <div className="w-full h-full flex items-centre justify-center  gap-5  flex-wrap  ">
-          {" "}
-          {recipies && recipies.length > 0
-            ? recipies.map((item) => (
-                <Recipe_item
-                  key={item.id}
-                  item={item}
-                  addtofavorites={addtofavorites}
-                />
-              ))
-            : null}
+       
+          
+          {render_method()}
         </div>
       </div>
-    
     </>
   );
 };
