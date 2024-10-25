@@ -1,18 +1,24 @@
-import React, {  useState } from 'react'
+
 import Homepage from './Homepage'
+import Themecontext from './Themecontext'
 
-
+import { useState } from 'react'
 
 
 const App = () => {
-  return (
 
+  let [theme,settheme]= useState(false)
+
+  return (
+    <Themecontext.Provider value={{theme,settheme}}>
+    
     <div className='w-full h-full'>
-   
+
    <Homepage  />
    
    
     </div>
+    </Themecontext.Provider>
   )
 }
 
