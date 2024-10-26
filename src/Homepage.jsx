@@ -91,7 +91,7 @@ const Homepage = () => {
     localStorage.setItem("favourites", JSON.stringify(newfav));
   }
 
-  let filteredfavourites = favorites && favorites.length
+  let filteredfavourites = favorites && favorites.length > 0
     ? favorites.filter((item) => {
       console.log(filtereditem.filtervalue)
      
@@ -179,8 +179,8 @@ return item.title.toLowerCase().includes(filtereditem.filtervalue);
        <h1 className="text-center  text-3xl text-orange-600  ">
           Favourites
         </h1>
-        <div className={filteredfavourites.length ?"w-full h-full    flex gap-10  overflow-x-scroll " :"w-full h-full    flex gap-10   "}>
-        {filteredfavourites && filteredfavourites.length
+        <div className={filteredfavourites && filteredfavourites.length >0 ?"w-full h-full    flex gap-10  overflow-x-scroll " :"w-full h-full    flex gap-10   "}>
+        {filteredfavourites && filteredfavourites.length > 0
             ? filteredfavourites.map((fav) => (
                 <Favourites
                   favorite_item={fav}
