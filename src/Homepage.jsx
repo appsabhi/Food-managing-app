@@ -91,7 +91,7 @@ const Homepage = () => {
     localStorage.setItem("favourites", JSON.stringify(newfav));
   }
 
-  let filteredfavourites = favorites
+  let filteredfavourites = favorites && favorites.length
     ? favorites.filter((item) => {
       console.log(filtereditem.filtervalue)
      
@@ -102,11 +102,7 @@ return item.title.toLowerCase().includes(filtereditem.filtervalue);
   console.log("filtereditem", filteredfavourites);
 
 
- let demofiltering = favorites.filter((item)=>{
-    return item.title.includes(null)
-  })
 
-  console.log("demo-----",demofiltering)
 
   let render_method = useCallback(() => {
     if (recipies && recipies.length > 0) {
